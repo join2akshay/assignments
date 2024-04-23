@@ -41,9 +41,117 @@
  */
   const express = require('express');
   const bodyParser = require('body-parser');
+const fs = require('fs');
+const { uuid } = require('uuidv4');
+
   
   const app = express();
-  
   app.use(bodyParser.json());
+
+
+
+
+  app.get('/todos',(req,res)=>{
+
+    // console.log(todo)
+    res.send(todo)
+  })
+  app.post('/todos',(req,res)=>{
+
+    const body= req.body
+    body.id=uuid()
+    fs.readFile(`./todos.json`, 'utf8', (err, data) => {
+      if (!err) {
+        const todo=JSON.parse(data)
+        // console.log(todo)
+        todo.push(body)
+        // console.log(todo)
+
+        fs.writeFileSync('./todos.json',JSON.stringify(todo))
+        res.send(todo)
+        // res.send(todo)
+      }else{
+     
+  
+       todo= data
+      }
+   
+    });
+    // todo.push(body)
+
+  })
+  app.put('/todos/:id',(req,res)=>{
+    const body= req.body
+    const id= req.params.id
+
+
+    fs.readFile(`./todos.json`, 'utf8', (err, data) => {
+      if (!err) {
+        const todo=JSON.parse(data)
+        console.log('hello===',todo[id])
+        todo[id]={...todo[id],...body}
+
+
+        fs.writeFileSync('./todos.json',JSON.stringify(todo))
+        res.send(todo)
+        // res.send(todo)
+      }else{
+     
+  
+       todo= data
+      }
+   
+    });
+
+
+
+  })
+  app.delete('/todos/:id',(req,res)=>{
+    const id= req.params.id
+
+      fs.readFile(`./todos.json`, 'utf8', (err, data) => {
+        if (!err) {
+          const todo=JSON.parse(data)
+        todo.splice(id,1)
+          fs.writeFileSync('./todos.json',JSON.stringify(todo))
+          res.send(todo)
+          // res.send(todo)
+        }else{
+       
+    
+         todo= data
+        }
+     
+      });
+
+   
+    // res.send(todo)
+  })
+
+  app.get('/todos/:id',(req,res)=>{
+    const id= req.params.id
+
+      fs.readFile(`./todos.json`, 'utf8', (err, data) => {
+        if (!err) {
+          const todo=JSON.parse(data)
+        // todo.splice(id,1)
+          // fs.writeFileSync('./todos.json',JSON.stringify(todo))
+          // res.send(todo)
+          res.send(todo[id])
+        }else{
+       
+    
+         throw res.send(err)
+         res.status(404).send();
+        }
+     
+      });
+
+   
+    // res.send(todo)
+  })
+  
+
+  app.listen(3000)
   
   module.exports = app;
